@@ -28,6 +28,14 @@ export class PublicViewComponent implements OnInit, AfterViewInit {
   public profileData;
   public stuff;
   public trueSkills = [];
+  public picThumbnails = {
+    'code': '../assets/img/projects/code.jpg',
+    'color': '../assets/img/projects/color.jpg',
+    'twoLaptops': '../assets/img/projects/laptops.jpg',
+    'ios': '../assets/img/projects/iphone.jpg',
+    'android': '../assets/img/projects/samsung.jpg',
+    'team': '../assets/img/projects/teamwork.jpg'
+  };
   public iconLinks = {
     'coder': './../../../assets/img/personal-icons/monitor-2.png',
     'front-end': './../../../assets/img/personal-icons/monitor-3.png',
@@ -67,6 +75,8 @@ export class PublicViewComponent implements OnInit, AfterViewInit {
   'mySQL', 'node', 'php', 'gres', 'python', 'r', 'ruby', 'sas', 'sass',
   'selenium', 'SQL', 'wordPress'];
 
+  public actualProjectImages = ['code', 'color', 'twoLaptops', 'ios', 'android', 'team' ];
+
   constructor(private _portfolio_service: JRPortfolioService, private _login_service: JRLoginService,
      public _photo: PhotoService, private _actRoute: ActivatedRoute) {  }
 
@@ -92,6 +102,7 @@ export class PublicViewComponent implements OnInit, AfterViewInit {
       this._portfolio_service.getPortfolioById(this.param).subscribe(PortData => {
       this.portfolioData = PortData.json().data;
       this.activeIcon = this.iconLinks[ this.portfolioData['Icon'] ];
+      this.activeThumbnail = this.iconLinks[ this.portfolioData['Icon'] ];
       // console.log('this.portfolioData', this.portfolioData);
       // console.log('portfolio skils array this.portfolioData.skillsArray', this.portfolioData.SkillsArray);
       for (const entry of this.actualSkillList) {
