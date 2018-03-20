@@ -94,11 +94,23 @@ class PortfolioController {
                 console.log('Missing field, aborting.');
                 return Common.resultErr(res, {message: 'Missing fields'});
             }
-
+            // const listOfField = ['AboutBlurb', 'Facebook', 'Twitter', 'Website', 'PhoneNumber', 'Theme'];
+            
             // declare collection
             const Portfolio = mongoose.model('USER_PORTFOLIO', PortfolioModel.portfolioSchema);            
 
             // go over non-required fields to avoid errors
+            const firstObj = {
+                AboutBlurb : req.body.AboutBlurb ? req.body.AboutBlurb : null,
+                Facebook : req.body.Facebook ? req.body.Facebook : null,
+                Twitter : req.body.Twitter ? req.body.Twitter : null,
+                Website : req.body.Website ? req.body.Website : null,
+                PhoneNumber : req.body.PhoneNumber ? req.body.PhoneNumber : '5595551234',
+                Projects : req.body.Projects ? req.body.Projects : [],
+                Theme : req.body.Theme ? req.body.Theme : 'Basic',
+                UserPhoto :req.body.UserPhoto ? req.body.UserPhoto: './../../../angular-src/src/assets/img/website/employees.png'
+    
+            }
             const AboutBlurb = req.body.AboutBlurb ? req.body.AboutBlurb : null;
             const Facebook = req.body.Facebook ? req.body.Facebook : null;
             const Twitter = req.body.Twitter ? req.body.Twitter : null;
@@ -108,7 +120,22 @@ class PortfolioController {
             const Theme = req.body.Theme ? req.body.Theme : 'Basic';
             const UserPhoto =req.body.UserPhoto ? req.body.UserPhoto: './../../../angular-src/src/assets/img/website/employees.png';
 
-            console.log('Updating portfolio for user:', req.body.Email);
+            const newBody = {
+                Email: String(req.body.Email),
+                Icon: String(req.body.Icon),
+                SkillsArray: req.body.SkillsArray,
+                PhoneNumber: String(PhoneNumber),
+                Projects: Projects,
+                Theme: String(Theme)
+            };
+            if (AboutBlurb) {newBody.AboutBlurb = AboutBlurb};
+            if (Facebook) {newBody.Facebook = Facebook};
+            if (Twitter) {newBody.Twitter = Twitter};
+            if (Website) {newBody.Website = Website};
+
+
+            console.log('Updating portfolio for user:', req.body.Email, 'UserID', req.body.User_ID);
+            console.log('body is:', newBody);
 
             // make sure the portfolio exists
             Portfolio.findOne({User_ID: req.body.User_ID}, function(err, result) {
@@ -121,17 +148,14 @@ class PortfolioController {
             });
 
             // perform the update
-            await Portfolio.update({User_ID: req.body.User_ID}, {
-                Email: String(req.body.Email),
-                AboutBlurb: String(AboutBlurb),
-                Facebook: String(Facebook),
-                Twitter: String(Twitter),
-                Icon: String(req.body.Icon),
-                Website: String(req.body.Website),
-                SkillsArray: req.body.SkillsArray,
-                PhoneNumber: String(PhoneNumber),
-                Projects: Projects,
-                Theme: String(Theme)
+            await Portfolio.update({User_ID: req.body.User_ID}, 
+                newBody
+            , (err, newPortfolio) => {
+                if (err) {
+                    console.log('mongo error', err);
+                } else {
+                    console.log('mongo, success???');
+                }
             })
 
             // success!!!
@@ -156,7 +180,7 @@ class PortfolioController {
             const Portfolio = mongoose.model('USER_PORTFOLIO', PortfolioModel.portfolioSchema);
 
             // make sure the portfolio doesnt exist so that we're not overwiting info
-            Portfolio.findOne({User_ID: req.body.User_ID}, function(err, result) {
+            await Portfolio.findOne({User_ID: req.body.User_ID}, function(err, result) {
                 if (result) {
                     // if there is a result, then a portfolio exists. cease and desist
                     console.log('Portfolio already exists, aborting add');
@@ -172,7 +196,7 @@ class PortfolioController {
                 AboutBlurb: `This is text about me. I'm awesome. Let's talk about how awesome I am.`,
                 Facebook: `https://www.facebook.com`,
                 Twitter: `YourTwitterHandle`,
-                Icon: `Keyboard`,
+                Icon: `coder`,
                 Website: 'yourWebsite.com',
                 SkillsArray: {
                     angular: false,
@@ -206,7 +230,7 @@ class PortfolioController {
             });
             console.log('Saving:', newPortfolio);
             // send object to the database
-            newPortfolio.save(function(err, newPortfolio) {
+            await newPortfolio.save(function(err, newPortfolio) {
                 if (err) {
                     return console.error(err);
                     res.json({message: err});

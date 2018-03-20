@@ -54,8 +54,8 @@ export class EditPortfolioComponent implements OnInit {
     //   id: '5a9dc86c39578a0041844f58'
     // };
     // console.log('current logged in user', this._loggedInUser);
-    
-    
+
+
     // when page loads, grab the necessary values from the database via the service and subscribe to them
     // NOTE: this will automatically grab the user on the service side, whether that is better or doing it here I'm not sure.
     this._portService.getPortfolioInfo().subscribe(result => {
@@ -120,7 +120,7 @@ export class EditPortfolioComponent implements OnInit {
       if (this['fieldProj' + (i + 1) + 'Link'] && this['fieldProj' + (i + 1) + 'SS']) {
         const project = {
           link: this['fieldProj' + (i + 1) + 'Link'],
-          ss: this['fieldProj' + (i + 1) + 'SS'] 
+          ss: this['fieldProj' + (i + 1) + 'SS']
           };
         updatedPort.Projects.push(project);
 
@@ -128,11 +128,16 @@ export class EditPortfolioComponent implements OnInit {
       } // end for
 
       updatedPort['User_ID'] = this._loggedInUser.id;
-    // console.log('object to send to db:', updatedPort);
+    console.log('object to send to db:', updatedPort);
     this._portService.updatePortfolio(updatedPort).subscribe(result => {
       // console.log(result);
       if (result.status === 200) {
         this.updateSuccess = true;
+        setTimeout(() => {
+          this.dash.displayPortfolio = 'none';
+          this.updateSuccess = false;
+    
+        }, 1100);
       }
     });
 
@@ -144,14 +149,9 @@ export class EditPortfolioComponent implements OnInit {
         this.updateSuccess = true;
       }
     });
-    console.log('message', updatedPort)
-   
-    setTimeout(()=>{ 
-      this.dash.displayPortfolio = 'none';
-      this.updateSuccess = false;
-      
-    }, 1100)
-    
+    console.log('message', updatedPort);
+
+ 
 
     // // send profile info to portfolio service
     // this._login.getById.updatePortfolioFromPortfolio(this.fieldEmail).subscribe(result => {
@@ -172,7 +172,6 @@ export class EditPortfolioComponent implements OnInit {
     //   this.loggedInUser.Username).subscribe(result => {
     //   // console.log('profile result: ', result);
     // });
-    
 
   }
 
