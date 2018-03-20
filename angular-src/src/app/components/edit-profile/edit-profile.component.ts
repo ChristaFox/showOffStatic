@@ -83,17 +83,16 @@ export class EditProfileComponent implements OnInit {
       this.loggedInUser.Username).subscribe(result => {
       // console.log('profile result: ', result);
     });
-  
-    setTimeout(()=>{ 
+
+    setTimeout(()=> {
       this.dash.displayProfile = 'none';
       this.updateSuccess = false;
-    }, 1100)
-    
+    }, 1100);
   }
 
   closeModal() {
     this.dash.displayProfile = 'none' ;
-    
+
   }
   save() {
     this.dash.displayProfile = 'none';
